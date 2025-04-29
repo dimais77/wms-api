@@ -5,6 +5,8 @@ class RunConfig(BaseModel):
     host: str = "localhost"
     port: int = 8000
 
+class ApiPrefix(BaseModel):
+    prefix: str = "/api"
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -16,6 +18,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
     run: RunConfig = RunConfig()
+    api: ApiPrefix = ApiPrefix()
 
 
 settings = Settings()
