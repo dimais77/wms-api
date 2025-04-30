@@ -1,5 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
 
 class RunConfig(BaseModel):
     host: str = "localhost"
@@ -7,6 +8,10 @@ class RunConfig(BaseModel):
 
 class ApiPrefix(BaseModel):
     prefix: str = "/api"
+
+class DatabaseConfig(BaseModel):
+    url: PostgresDsn = "postgresql+asyncpg://user:password@localhost:5432/dbname"
+    echo: bool = False
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -19,6 +24,7 @@ class Settings(BaseSettings):
     )
     run: RunConfig = RunConfig()
     api: ApiPrefix = ApiPrefix()
+    db: DatabaseConfig = DatabaseConfig()
 
 
 settings = Settings()
