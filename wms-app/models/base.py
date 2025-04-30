@@ -3,6 +3,7 @@ from sqlalchemy.orm import DeclarativeBase, declared_attr
 from sqlalchemy.orm import Mapped, mapped_column
 
 from core import settings
+from utils import camel_case_to_snake_case
 
 
 class Base(DeclarativeBase):
@@ -13,8 +14,7 @@ class Base(DeclarativeBase):
         naming_convention=settings.db.naming_convention,
     )
 
-
     @classmethod
     @declared_attr.directive
     def __tablename__(cls) -> str:
-        return f"{cls.__name__.lower()}s"
+        return f"{camel_case_to_snake_case(cls.__name__)}s"

@@ -10,8 +10,8 @@ class ApiPrefix(BaseModel):
     prefix: str = "/api"
 
 class DatabaseConfig(BaseModel):
-    url: PostgresDsn = "postgresql+asyncpg://user:password@localhost:5432/dbname"
-    echo: bool = False
+    url: PostgresDsn
+    echo: bool = True
     naming_convention: dict[str, str] = {
         "ix": "ix_%(column_0_label)s",
         "uq": "uq_%(table_name)s_%(column_0_N_name)s",
@@ -22,7 +22,7 @@ class DatabaseConfig(BaseModel):
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env.template, .env",
+        env_file=(".env.template", ".env"),
         env_file_encoding="utf-8",
         case_sensitive=False,
         env_nested_delimiter="__",
@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     )
     run: RunConfig = RunConfig()
     api: ApiPrefix = ApiPrefix()
-    db: DatabaseConfig = DatabaseConfig()
+    db: DatabaseConfig
 
 
 settings = Settings()
