@@ -1,0 +1,26 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER?Variable not set}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
+      - POSTGRES_DB=${POSTGRES_DB?Variable not set}
+    ports:
+      - "5432:5432"
+    restart: always
+
+  adminer:
+    image: adminer
+    ports:
+      - "8080:8080"
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_MAIL?Variable not set}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD?Variable not set}
+    ports:
+      - "5050:80"
+    restart: always
