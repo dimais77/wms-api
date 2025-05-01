@@ -6,11 +6,13 @@ class RunConfig(BaseModel):
     host: str = "localhost"
     port: int = 8000
 
+
 class ApiPrefix(BaseModel):
     prefix: str = "/api"
 
+
 class DatabaseConfig(BaseModel):
-    url: PostgresDsn
+    url: PostgresDsn = None
     echo: bool = True
     naming_convention: dict[str, str] = {
         "ix": "ix_%(column_0_label)s",
@@ -19,6 +21,7 @@ class DatabaseConfig(BaseModel):
         "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
         "pk": "pk_%(table_name)s",
     }
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -31,7 +34,7 @@ class Settings(BaseSettings):
     )
     run: RunConfig = RunConfig()
     api: ApiPrefix = ApiPrefix()
-    db: DatabaseConfig
+    db: DatabaseConfig = DatabaseConfig()
 
 
 settings = Settings()
