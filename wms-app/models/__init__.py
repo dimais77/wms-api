@@ -4,11 +4,11 @@ __all__ = [
     "CreatedAtMixin",
     "UpdatedAtMixin",
     "TimestampsMixin",
-    "Products",
+    "Product",
 ]
 
 
 from .base import Base
 from .mixins.id_mixins import IntIdPkMixin
 from .mixins.timestamp_mixins import CreatedAtMixin, UpdatedAtMixin, TimestampsMixin
-from .products import Products
+from .products import Product
