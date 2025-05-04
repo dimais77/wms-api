@@ -1,9 +1,10 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status, Query, Path
+from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.db_helper import db_helper
+from dto.products import ProductCreateDTO, ProductUpdateDTO
 from schemas.products import (
     ProductResponseSchema,
     ProductCreateSchema,
@@ -11,7 +12,9 @@ from schemas.products import (
 )
 from services.products import ProductService
 
-router = APIRouter(tags=["Products"])
+router = APIRouter(
+    tags=["Products"],
+)
 
 
 def get_service(
@@ -30,11 +33,9 @@ async def create_product(
     payload: ProductCreateSchema,
     service: ProductService = Depends(get_service),
 ) -> ProductResponseSchema:
-    try:
-        product = await service.create_product(payload)
-        return ProductResponseSchema.model_validate(product)
-    except HTTPException:
-        raise
+    dto = ProductCreateDTO(**payload.model_dump())
+    created = await service.create_product(dto)
+    return ProductResponseSchema.model_validate(created)
 
 
 @router.get(
@@ -46,11 +47,6 @@ async def read_all_products(
     service: ProductService = Depends(get_service),
 ) -> list[ProductResponseSchema]:
     products = await service.get_all_products()
-    if not products:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Products not found",
-        )
     return [ProductResponseSchema.model_validate(p) for p in products]
 
 
@@ -75,7 +71,7 @@ async def search_products(
     products = await service.search_products_by_name(names)
     if not products:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status.HTTP_404_NOT_FOUND,
             detail="Products not found",
         )
     return [ProductResponseSchema.model_validate(p) for p in products]
@@ -84,20 +80,18 @@ async def search_products(
 @router.get(
     "/{product_id}",
     response_model=ProductResponseSchema,
-    summary="Детали продукта по ID  ",
+    summary="Детали продукта по ID",
 )
 async def read_product_by_id(
     product_id: Annotated[
-        int, Path(..., ge=1, description="Уникальный ID продукта, целое ≥1")
+        int,
+        Path(..., ge=1, description="Уникальный ID продукта, целое ≥1"),
     ],
     service: ProductService = Depends(get_service),
 ) -> ProductResponseSchema:
     product = await service.get_product_by_id(product_id)
     if not product:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Product not found",
-        )
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Product not found")
     return ProductResponseSchema.model_validate(product)
 
 
@@ -109,21 +103,15 @@ async def read_product_by_id(
 async def update_product(
     product_id: Annotated[
         int,
-        Path(
-            ...,
-            ge=1,
-            description="ID продукта для обновления",
-        ),
+        Path(..., ge=1, description="ID продукта для обновления"),
     ],
     payload: ProductUpdateSchema,
     service: ProductService = Depends(get_service),
 ) -> ProductResponseSchema:
-    updated = await service.update_product(product_id, payload)
+    dto = ProductUpdateDTO(**payload.model_dump(exclude_unset=True))
+    updated = await service.update_product(product_id, dto)
     if not updated:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Product not found",
-        )
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Product not found")
     return ProductResponseSchema.model_validate(updated)
 
 
@@ -135,16 +123,10 @@ async def update_product(
 async def delete_product(
     product_id: Annotated[
         int,
-        Path(
-            ...,
-            description="ID продукта для удаления",
-        ),
+        Path(..., ge=1, description="ID продукта для удаления"),
     ],
     service: ProductService = Depends(get_service),
 ) -> None:
     deleted = await service.delete_product(product_id)
     if not deleted:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Product not found",
-        )
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Product not found")

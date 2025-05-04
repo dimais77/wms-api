@@ -9,3 +9,21 @@ class ProductDTO(BaseModel):
     description: str | None
     price: float
     quantity: int
+
+
+class ProductCreateDTO(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str
+    description: str | None
+    price: float
+    quantity: int
+
+
+class ProductUpdateDTO(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str | None
+    description: str | None
+    price: float | None
+    quantity: int | None

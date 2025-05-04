@@ -4,29 +4,36 @@ from fastapi import HTTPException, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models.products import Product
-from repositories.products import ProductRepository
-from schemas.products import ProductCreateSchema, ProductUpdateSchema
+from dto import (
+    ProductDTO,
+    ProductCreateDTO,
+    ProductUpdateDTO,
+)
+from models import Product
+from repositories import ProductRepository
 
 
 class ProductService:
     def __init__(self, session: AsyncSession):
         self.repo = ProductRepository(session)
-        self.session = session
 
-    async def get_all_products(self) -> List[Product]:
-        return await self.repo.read_all()
+    async def get_all_products(self) -> List[ProductDTO]:
+        products = await self.repo.read_all()
+        return [ProductDTO.model_validate(p) for p in products]
 
-    async def get_product_by_id(self, product_id: int) -> Optional[Product]:
-        return await self.repo.find_by_id(product_id)
+    async def get_product_by_id(self, product_id: int) -> Optional[ProductDTO]:
+        product = await self.repo.find_by_id(product_id)
+        return ProductDTO.model_validate(product) if product else None
 
-    async def search_products_by_name(self, names: list[str]) -> List[Product]:
-        return await self.repo.find_by_name(names)
+    async def search_products_by_name(self, names: list[str]) -> List[ProductDTO]:
+        products = await self.repo.find_by_name(names)
+        return [ProductDTO.model_validate(p) for p in products]
 
-    async def create_product(self, schema: ProductCreateSchema) -> Product:
-        product = Product(**schema.model_dump())
+    async def create_product(self, dto: ProductCreateDTO) -> ProductDTO:
+        product = Product(**dto.model_dump())
         try:
-            return await self.repo.create(product)
+            created = await self.repo.create(product)
+            return ProductDTO.model_validate(created)
         except IntegrityError:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -34,15 +41,16 @@ class ProductService:
             )
 
     async def update_product(
-        self, product_id: int, schema: ProductUpdateSchema
-    ) -> Optional[Product]:
+        self, product_id: int, dto: ProductUpdateDTO
+    ) -> Optional[ProductDTO]:
         existing = await self.repo.find_by_id(product_id)
         if not existing:
             return None
-        for field, value in schema.model_dump(exclude_unset=True).items():
-            setattr(existing, field, value)
+        for k, v in dto.model_dump(exclude_unset=True).items():
+            setattr(existing, k, v)
         try:
-            return await self.repo.update(existing)
+            updated = await self.repo.update(existing)
+            return ProductDTO.model_validate(updated)
         except IntegrityError:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,

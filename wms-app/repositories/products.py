@@ -3,7 +3,7 @@ from typing import Optional, List
 from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models.products import Product
+from models import Product
 
 
 class ProductRepository:
@@ -23,7 +23,7 @@ class ProductRepository:
         filters = [Product.name.ilike(f"%{name}%") for name in names]
         stmt = select(Product).where(or_(*filters))
         result = await self.session.execute(stmt)
-        return result.scalars().all()
+        return list(result.scalars().all())
 
     async def create(self, product: Product) -> Product:
         self.session.add(product)
