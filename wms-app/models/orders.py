@@ -1,9 +1,10 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import String, DateTime, func
+from sqlalchemy import String, DateTime, func, Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models import Base, IntIdPkMixin, TimestampsMixin
+from .enums import OrderStatusEnum
 
 if TYPE_CHECKING:
     from models import OrderItem
@@ -17,7 +18,8 @@ class Order(IntIdPkMixin, TimestampsMixin, Base):
         index=True,
     )
     status: Mapped[str] = mapped_column(
-        String(20),
+        SQLEnum(OrderStatusEnum, name="order_status_enum"),
+        default=OrderStatusEnum.draft,
         nullable=False,
         index=True,
     )

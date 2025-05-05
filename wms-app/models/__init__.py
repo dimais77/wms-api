@@ -7,6 +7,7 @@ __all__ = [
     "Product",
     "Order",
     "OrderItem",
+    "OrderStatusEnum",
 ]
 
 
@@ -16,3 +17,4 @@ from .base import Base
 from .products import Product
 from .orders import Order
 from .order_items import OrderItem
+from .enums import OrderStatusEnum

@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Integer, ForeignKey, Numeric, CheckConstraint
+from sqlalchemy import Integer, ForeignKey, Numeric, CheckConstraint, Index
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models import Base, IntIdPkMixin, TimestampsMixin
@@ -10,6 +10,11 @@ if TYPE_CHECKING:
 
 
 class OrderItem(IntIdPkMixin, TimestampsMixin, Base):
+    __table_args__ = (
+        Index("uq_order_product", "order_id", "product_id", unique=True),
+        Index("idx_product_quantity", "product_id", "quantity"),
+    )
+
     order_id: Mapped[int] = mapped_column(
         Integer,
         ForeignKey("orders.id", ondelete="CASCADE"),
