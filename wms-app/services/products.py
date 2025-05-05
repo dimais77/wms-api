@@ -4,11 +4,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from dto import (
-    ProductDTO,
-    ProductCreateDTO,
-    ProductUpdateDTO,
-)
+from dto import ProductDTO, ProductCreateDTO, ProductUpdateDTO
 from models import Product
 from repositories import ProductRepository
 
