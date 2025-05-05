@@ -13,6 +13,6 @@ __all__ = [
 from .base import Base
 from .mixins.id_mixins import IntIdPkMixin
 from .mixins.timestamp_mixins import CreatedAtMixin, UpdatedAtMixin, TimestampsMixin
-from .order_items import OrderItem
-from .orders import Order
 from .products import Product
+from .orders import Order
+from .order_items import OrderItem

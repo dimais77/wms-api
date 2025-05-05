@@ -3,7 +3,8 @@ from decimal import Decimal
 from sqlalchemy import String, Text, Numeric, Integer, CheckConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models import Base, IntIdPkMixin, OrderItem, TimestampsMixin
+from models import Base, IntIdPkMixin, TimestampsMixin
+from models import OrderItem
 
 
 class Product(IntIdPkMixin, TimestampsMixin, Base):

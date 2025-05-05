@@ -1,7 +1,7 @@
 from sqlalchemy import String, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models import Base, IntIdPkMixin, TimestampsMixin, OrderItem
+from models import Base, IntIdPkMixin, TimestampsMixin
 
 
 class Order(IntIdPkMixin, TimestampsMixin, Base):

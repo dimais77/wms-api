@@ -1,7 +1,7 @@
 from sqlalchemy import Integer, ForeignKey, Numeric, CheckConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models import Base, IntIdPkMixin, Order, Product, TimestampsMixin
+from models import Base, IntIdPkMixin, TimestampsMixin
 
 
 class OrderItem(IntIdPkMixin, TimestampsMixin, Base):
@@ -9,11 +9,13 @@ class OrderItem(IntIdPkMixin, TimestampsMixin, Base):
         Integer,
         ForeignKey("orders.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
     )
     product_id: Mapped[int] = mapped_column(
         Integer,
         ForeignKey("products.id"),
         nullable=False,
+        index=True,
     )
     quantity: Mapped[int] = mapped_column(
         Integer,
