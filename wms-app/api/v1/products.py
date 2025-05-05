@@ -1,9 +1,8 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from db.db_helper import db_helper
+from api.v1.dependencies import get_product_service
 from dto.products import ProductCreateDTO, ProductUpdateDTO
 from schemas.products import (
     ProductResponseSchema,
@@ -17,12 +16,6 @@ router = APIRouter(
 )
 
 
-def get_service(
-    session: AsyncSession = Depends(db_helper.get_transactional_session),
-) -> ProductService:
-    return ProductService(session)
-
-
 @router.post(
     "/",
     response_model=ProductResponseSchema,
@@ -31,7 +24,7 @@ def get_service(
 )
 async def create_product(
     payload: ProductCreateSchema,
-    service: ProductService = Depends(get_service),
+    service: ProductService = Depends(get_product_service),
 ) -> ProductResponseSchema:
     dto = ProductCreateDTO(**payload.model_dump())
     created = await service.create_product(dto)
@@ -44,7 +37,7 @@ async def create_product(
     summary="Список всех продуктов",
 )
 async def read_all_products(
-    service: ProductService = Depends(get_service),
+    service: ProductService = Depends(get_product_service),
 ) -> list[ProductResponseSchema]:
     products = await service.get_all_products()
     return [ProductResponseSchema.model_validate(p) for p in products]
@@ -66,7 +59,7 @@ async def search_products(
             description="Подстроки для поиска в названии (можно несколько)",
         ),
     ],
-    service: ProductService = Depends(get_service),
+    service: ProductService = Depends(get_product_service),
 ) -> list[ProductResponseSchema]:
     products = await service.search_products_by_name(names)
     if not products:
@@ -87,7 +80,7 @@ async def read_product_by_id(
         int,
         Path(..., ge=1, description="Уникальный ID продукта, целое ≥1"),
     ],
-    service: ProductService = Depends(get_service),
+    service: ProductService = Depends(get_product_service),
 ) -> ProductResponseSchema:
     product = await service.get_product_by_id(product_id)
     if not product:
@@ -106,7 +99,7 @@ async def update_product(
         Path(..., ge=1, description="ID продукта для обновления"),
     ],
     payload: ProductUpdateSchema,
-    service: ProductService = Depends(get_service),
+    service: ProductService = Depends(get_product_service),
 ) -> ProductResponseSchema:
     dto = ProductUpdateDTO(**payload.model_dump(exclude_unset=True))
     updated = await service.update_product(product_id, dto)
@@ -125,7 +118,7 @@ async def delete_product(
         int,
         Path(..., ge=1, description="ID продукта для удаления"),
     ],
-    service: ProductService = Depends(get_service),
+    service: ProductService = Depends(get_product_service),
 ) -> None:
     deleted = await service.delete_product(product_id)
     if not deleted:
