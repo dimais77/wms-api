@@ -1,10 +1,13 @@
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from sqlalchemy import String, Text, Numeric, Integer, CheckConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models import Base, IntIdPkMixin, TimestampsMixin
-from models import OrderItem
+from models import IntIdPkMixin, TimestampsMixin, Base
+
+if TYPE_CHECKING:
+    from models.order_items import OrderItem
 
 
 class Product(IntIdPkMixin, TimestampsMixin, Base):

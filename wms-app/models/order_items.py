@@ -1,7 +1,12 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Integer, ForeignKey, Numeric, CheckConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models import Base, IntIdPkMixin, TimestampsMixin
+
+if TYPE_CHECKING:
+    from models import Order, Product
 
 
 class OrderItem(IntIdPkMixin, TimestampsMixin, Base):
