@@ -10,6 +10,7 @@ class RunConfig(BaseModel):
 class ApiV1Prefix(BaseModel):
     prefix: str = "/v1"
     products: str = "/products"
+    orders: str = "/orders"
 
 
 class ApiPrefix(BaseModel):
