@@ -54,14 +54,14 @@ REST API для управления складскими операциями �
 1. Клонировать репозиторий:
 
 ```bash
-git clone https://your-repository-url.git
+git clone https://github.com/dimais77/wms-api.git
 cd WarehouseManagementSystemAPI/wms_app
 ```
 
 2. Установить зависимости:
 
 ```bash
-poetry install --with test
+poetry install
 ```
 
 3. Настроить окружение:
@@ -73,7 +73,7 @@ cp .env.template .env
 Отредактируйте `.env`:
 
 ```ini
-APP_CONFIG__DB__URL=postgresql+asyncpg://user:password@localhost:5432/wms_db
+APP_CONFIG__DB__URL=postgresql+asyncpg://user:pwd@localhost:5432/wms_db
 APP_CONFIG__DB__ECHO=false
 ```
 
@@ -156,7 +156,7 @@ http://localhost:8000/docs
 
 ## 🧪 Тестирование
 
-Запуск всех тестов:
+Запуск тестов:
 
 ```bash
 poetry run pytest -v
@@ -170,8 +170,7 @@ poetry run pytest --cov=wms_app --cov-report=html
 
 Структура тестов:
 
-- `tests/unit/` - модульные тесты сервисов и репозиториев
-- `tests/integration/` - интеграционные тесты API
+- `tests/api/` - интеграционные тесты API
 
 ---
 
@@ -197,6 +196,6 @@ poetry run pytest --cov=wms_app --cov-report=html
 - Email: [dimais@mail.ru](mailto:dimais@mail.ru)
 
 Проект доступен по адресу:  
-https://github.com/dimais77/warehouse-management-api
+https://github.com/dimais77/wms-api.git
 
 ```
